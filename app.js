@@ -31,6 +31,6 @@ app.put('/api/route/:id', function (req, res) {
     })
 })
 
-app.listen(3000, function () {
-  console.log('Start listening on port 3000')
+app.listen(app.get('port'), function () {
+  console.log('Start listening on port ' + app.get('port'))
 })
