@@ -1,5 +1,6 @@
 const express = require('express')
 const admin = require('firebase-admin')
+const cors = require('cors')
 const app = express()
 const serviceAccount = require('./route64-cecb6-firebase-adminsdk-tqabj-e79b45567d.json')
 
@@ -9,7 +10,9 @@ admin.initializeApp({
   databaseURL: 'https://route64-cecb6.firebaseio.com'
 })
 
-app.get('/', function(req, res) {
+app.use(cors())
+
+app.get('/', function (req, res) {
   res.send('Welcome to Route 64!')
 })
 
@@ -18,8 +21,8 @@ app.put('/api/route/:id', function (req, res) {
   const registrationToken = 'eChFXwTvDHo:APA91bHM36FjAe_d_Bq_eipPkhJpoDJ9x3zw1ay67X5kp2-l8tK_etc0aXgQvVpT1f85so-OZrwtS5SJCTk0W0aNQAKdNCJMZKtFvSf-zZnko0X0yWLpCc7QdqhNJBzb-yhDOAXJypKo'
   var payload = {
     data: {
-      score: '850',
-      time: '2:45'
+      title: 'Sample Title',
+      payload: 'Sample Payload'
     }
   }
   admin.messaging().sendToDevice(registrationToken, payload)
