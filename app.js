@@ -32,6 +32,8 @@ app.put('/api/route/:id', function (req, res) {
     .catch(function (error) {
       console.log('Error sending message:', error)
     })
+
+  res.status(204).end()
 })
 
 app.listen(app.get('port'), function () {
