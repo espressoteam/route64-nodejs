@@ -1,4 +1,5 @@
 const express = require('express')
+const bodyParser = require('body-parser')
 const admin = require('firebase-admin')
 const cors = require('cors')
 const app = express()
@@ -11,28 +12,44 @@ admin.initializeApp({
 })
 
 app.use(cors())
+app.use(bodyParser.json())
 
-app.get('/', function (req, res) {
-  res.send('Welcome to Route 64!')
-})
+const db = admin.database()
+const tokensRef = db.ref('tokens')
 
-app.put('/api/route/:id', function (req, res) {
-  // temporary hardcoded token
-  const registrationToken = 'eChFXwTvDHo:APA91bHM36FjAe_d_Bq_eipPkhJpoDJ9x3zw1ay67X5kp2-l8tK_etc0aXgQvVpT1f85so-OZrwtS5SJCTk0W0aNQAKdNCJMZKtFvSf-zZnko0X0yWLpCc7QdqhNJBzb-yhDOAXJypKo'
-  var payload = {
-    data: {
-      title: 'Sample Title',
-      payload: 'Sample Payload'
-    }
-  }
-  admin.messaging().sendToDevice(registrationToken, payload)
+const notify = function (token, payload) {
+  admin.messaging().sendToDevice(token, payload)
     .then(function (response) {
       console.log('Successfully sent message:', response)
     })
     .catch(function (error) {
       console.log('Error sending message:', error)
     })
+}
 
+const notifyAll = function (payload) {
+  tokensRef.once('value', function (data) {
+    var tokens = data.val()
+    Object.keys(tokens).forEach(function (id) {
+      notify(tokens[id].token, payload)
+    })
+  }, function (errorObject) {
+    console.log('The read tokens failed: ' + errorObject.code)
+  })
+}
+
+app.get('/', function (req, res) {
+  res.send('Welcome to Route 64!')
+})
+
+app.put('/api/route/:id', function (req, res) {
+  var payload = {
+    data: {
+      title: 'Your favorite route has been updated',
+      body: `Traveller ${req.body.traveller} just changed title to "${req.body.title}"`
+    }
+  }
+  notifyAll(payload)
   res.status(204).end()
 })
 
