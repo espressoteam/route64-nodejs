@@ -45,8 +45,8 @@ app.get('/', function (req, res) {
 app.put('/api/route/:id', function (req, res) {
   var payload = {
     data: {
-      title: 'Your favorite route has been updated',
-      body: `Traveller ${req.body.traveller} just changed title to "${req.body.title}"`
+      title: `${req.body.traveller} updated a route`,
+      body: `Route ${req.body.title}`
     }
   }
   notifyAll(payload)
