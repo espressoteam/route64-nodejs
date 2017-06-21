@@ -3,9 +3,14 @@ const admin = require('firebase-admin')
 const app = express()
 const serviceAccount = require('./route64-cecb6-firebase-adminsdk-tqabj-e79b45567d.json')
 
+app.set('port', (process.env.PORT || 3000))
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: 'https://route64-cecb6.firebaseio.com'
+})
+
+app.get('/', function(req, res) {
+  res.send('Welcome to Route 64!')
 })
 
 app.put('/api/route/:id', function (req, res) {
@@ -24,7 +29,6 @@ app.put('/api/route/:id', function (req, res) {
     .catch(function (error) {
       console.log('Error sending message:', error)
     })
-  res.send('Hello World!')
 })
 
 app.listen(3000, function () {
